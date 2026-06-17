@@ -3,6 +3,17 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 
+def _icon_path():
+    """Path to the plugin icon, preferring the scalable SVG (crisp at any DPI),
+    falling back to the raster PNG. Returns None if neither is present."""
+    here = os.path.dirname(__file__)
+    for name in ("icon.svg", "icon.png"):
+        p = os.path.join(here, name)
+        if os.path.exists(p):
+            return p
+    return None
+
+
 class MeridianPlugin:
     def __init__(self, iface):
         self.iface = iface
@@ -10,8 +21,8 @@ class MeridianPlugin:
         self._dialog = None
 
     def initGui(self):
-        icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
-        icon = QIcon(icon_path) if os.path.exists(icon_path) else QIcon()
+        icon_path = _icon_path()
+        icon = QIcon(icon_path) if icon_path else QIcon()
         self._action = QAction(icon, "Meridian…", self.iface.mainWindow())
         self._action.setToolTip("Add magnetic declination and grid convergence to a layer")
         self._action.triggered.connect(self.run)

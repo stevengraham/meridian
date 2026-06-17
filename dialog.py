@@ -209,9 +209,10 @@ class MeridianDialog(QDialog):
         super().__init__(parent, Qt.Window)
         uic.loadUi(UI_FILE, self)
         from qgis.PyQt.QtGui import QIcon
-        _icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
-        if os.path.exists(_icon_path):
-            self.setWindowIcon(QIcon(_icon_path))
+        from .plugin import _icon_path
+        _ip = _icon_path()
+        if _ip:
+            self.setWindowIcon(QIcon(_ip))
         self.iface = iface
         self._click_tool = None
         self._prev_tool = None

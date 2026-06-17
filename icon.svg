@@ -1,0 +1,13 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Meridian Logo - two-tone compass needle (master, 128x128 base) -->
+  <!-- North half split vertically: dark left, blue-accent right.
+       South tail in two greys. Matches generate_icons.py raster output. -->
+  <g>
+    <!-- North half -->
+    <polygon points="64,10 64,64 44,64" fill="#1a1a1a"/>   <!-- upper-left -->
+    <polygon points="64,10 84,64 64,64" fill="#0066cc"/>   <!-- upper-right -->
+    <!-- South tail -->
+    <polygon points="44,64 64,64 64,110" fill="#787878"/>  <!-- lower-left -->
+    <polygon points="64,64 84,64 64,110" fill="#505050"/>  <!-- lower-right -->
+  </g>
+</svg>
