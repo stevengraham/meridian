@@ -1,4 +1,4 @@
-"""North Corrections — PDF/PNG report generation (pure Python, no QGIS imports)."""
+"""Meridian — PDF/PNG report generation (pure Python, no QGIS imports)."""
 
 import math
 

@@ -312,7 +312,7 @@ class MeridianDialog(QDialog):
         for field in layer.fields():
             if field.typeName().lower() not in _EXCLUDE:
                 self.dateFieldCombo.addItem(field.name())
-        self.editOutputName.setText(f"{layer.name()}_north_corrections")
+        self.editOutputName.setText(f"{layer.name()}_meridian")
 
     def _update_wmmhr_warning(self):
         any_wmmhr = any("WMMHR" in m.upper() for m in magdec.available_models())
@@ -523,7 +523,7 @@ class MeridianDialog(QDialog):
 
         out_fields.append(QgsField("decl_date", QVariant.String, "string", 10))
 
-        out_name = self.editOutputName.text().strip() or "north_corrections_output"
+        out_name = self.editOutputName.text().strip() or "meridian_output"
         is_polygon = layer.geometryType() == QgsWkbTypes.PolygonGeometry
 
         # Pre-read features on the main thread
@@ -612,7 +612,7 @@ class MeridianDialog(QDialog):
         ext = fmt.upper()
         filt = f"{ext} files (*.{fmt})"
         default_name = (
-            f"north_corrections"
+            f"meridian"
             f"_{self._last_result['date_str']}"
             f".{fmt}"
         )
