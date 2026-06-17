@@ -436,7 +436,7 @@ class MeridianDialog(QDialog):
                     "date_str": date_str,
                     "model": display_model or model_name,
                     "crs_name": canvas_crs.description() if not canvas_crs.isGeographic()
-                                else "",
+                    else "",
                     "declination": d,
                     "grid_convergence": gamma,
                     "components": (

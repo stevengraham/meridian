@@ -12,10 +12,10 @@ from ._wmm import WMM, _decimal_year, _DATA_DIR
 # Ordered newest first so the first match wins.
 _EPOCHS = [
     (2025.0, 2030.0, "WMMHR2025", "WMMHR.COF"),     # high-resolution variant
-    (2025.0, 2030.0, "WMM2025",   "WMM2025.COF"),   # standard variant
-    (2020.0, 2025.0, "WMM2020",   "WMM2020.COF"),
+    (2025.0, 2030.0, "WMM2025", "WMM2025.COF"),   # standard variant
+    (2020.0, 2025.0, "WMM2020", "WMM2020.COF"),
     (2015.0, 2020.0, "WMM2015v2", "WMM2015v2.COF"),
-    (2010.0, 2015.0, "WMM2010",   "WMM2010.COF"),
+    (2010.0, 2015.0, "WMM2010", "WMM2010.COF"),
 ]
 
 # Only keep epochs whose COF file is present
@@ -55,7 +55,7 @@ def model_for_date(date_str: str) -> WMM:
             return _get_model(fname)
     # Date is outside all known epochs — warn and use nearest boundary model
     all_start = _AVAILABLE[-1][0]
-    all_end   = _AVAILABLE[0][1]
+    all_end = _AVAILABLE[0][1]
     warnings.warn(
         f"Date '{date_str}' (decimal {dy:.3f}) is outside all available WMM epochs "
         f"({all_start:.1f}–{all_end:.1f}). Results may be inaccurate.",

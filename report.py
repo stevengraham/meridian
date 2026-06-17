@@ -16,8 +16,8 @@ except ImportError:
 
 _C_GRID = "#111111"
 _C_TRUE = "#1565C0"
-_C_MAG  = "#B71C1C"
-_DASH   = (0, (6, 3))
+_C_MAG = "#B71C1C"
+_DASH = (0, (6, 3))
 
 
 # ── geometry helpers ──────────────────────────────────────────────────────────
@@ -124,7 +124,7 @@ def _draw_north_diagram(ax, declination, grid_convergence):
     # Angle from vertical (east = positive clockwise)
     a_grid = 0.0
     a_true = (-grid_convergence) if grid_convergence is not None else None
-    a_mag  = gma if gma is not None else declination
+    a_mag = gma if gma is not None else declination
 
     ox, oy = 0.50, 0.04
 
@@ -132,7 +132,7 @@ def _draw_north_diagram(ax, declination, grid_convergence):
     # Grid North is longest (reference line); True North shortest because it
     # sits closest to Grid North and needs its label pushed well below.
     L_GRID = 0.86
-    L_MAG  = 0.72
+    L_MAG = 0.72
     L_TRUE = 0.58
 
     ax.set_xlim(-0.12, 1.12)
@@ -200,10 +200,10 @@ def _build_table_rows(lat, lon, date_str, model, crs_name,
     """
     gma = (declination - grid_convergence) if grid_convergence is not None else None
     rows = [
-        ["Latitude",              f"{lat:+.6f}°"],
-        ["Longitude",             f"{lon:+.6f}°"],
-        ["Date",                  date_str],
-        ["Model",                 model],
+        ["Latitude", f"{lat:+.6f}°"],
+        ["Longitude", f"{lon:+.6f}°"],
+        ["Date", date_str],
+        ["Model", model],
     ]
     if crs_name:
         rows.append(["Grid CRS", crs_name])
@@ -211,17 +211,17 @@ def _build_table_rows(lat, lon, date_str, model, crs_name,
     rows.append(["Magnetic Declination  D",
                  f"{declination:+.4f}° E" if not math.isnan(declination) else "—"])
     if grid_convergence is not None:
-        rows.append(["Grid Convergence  γ",  f"{grid_convergence:+.4f}° E"])
+        rows.append(["Grid Convergence  γ", f"{grid_convergence:+.4f}° E"])
         rows.append(["Grid Magnetic Angle  GMA = D − γ",
                      f"{gma:+.4f}°" if gma is not None else "—"])
     if components:
         rows.append(["", ""])
-        rows.append(["Inclination  I",         f"{components['I']:+.4f}°"])
+        rows.append(["Inclination  I", f"{components['I']:+.4f}°"])
         rows.append(["Horizontal intensity  H", f"{components['H']:.2f} nT"])
-        rows.append(["Total intensity  F",      f"{components['F']:.2f} nT"])
-        rows.append(["North component  X",      f"{components['X']:.2f} nT"])
-        rows.append(["East component  Y",       f"{components['Y']:.2f} nT"])
-        rows.append(["Vertical component  Z",   f"{components['Z']:.2f} nT"])
+        rows.append(["Total intensity  F", f"{components['F']:.2f} nT"])
+        rows.append(["North component  X", f"{components['X']:.2f} nT"])
+        rows.append(["East component  Y", f"{components['Y']:.2f} nT"])
+        rows.append(["Vertical component  Z", f"{components['Z']:.2f} nT"])
     return rows
 
 
@@ -283,8 +283,8 @@ def _add_worked_examples(fig, declination, grid_convergence, annual_rate,
     )
 
     dy = (y_top - y_bottom) / 5.2        # line height in figure coords
-    x_lhs  = 0.08                         # left column (formula)
-    x_ann  = 0.40                         # right column (annotation)
+    x_lhs = 0.08                         # left column (formula)
+    x_ann = 0.40                         # right column (annotation)
     y = y_top - dy * 0.55
 
     # Heading
@@ -391,11 +391,11 @@ def north_diagram_figure(
     n_rows = 1 + len(_table_rows(
         lat, lon, date_str, model, crs_name, declination, grid_convergence, components
     ))
-    table_height  = max(0.14, 0.05 + n_rows * 0.016)
-    examples_bot  = 0.02 + table_height + 0.01
-    examples_top  = examples_bot + 0.11
-    diag_bot      = examples_top + 0.005
-    diag_height   = max(0.30, 0.905 - diag_bot)
+    table_height = max(0.14, 0.05 + n_rows * 0.016)
+    examples_bot = 0.02 + table_height + 0.01
+    examples_top = examples_bot + 0.11
+    diag_bot = examples_top + 0.005
+    diag_height = max(0.30, 0.905 - diag_bot)
 
     # ── diagram axes ──
     ax_diag = fig.add_axes([0.07, diag_bot, 0.86, diag_height])

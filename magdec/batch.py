@@ -85,8 +85,8 @@ def declination_batch(
         scalar_km = float(alt_km)
         alt_arr = [scalar_km] * len(df)
 
-    lat_arr  = df[lat].to_numpy()
-    lon_arr  = df[lon].to_numpy()
+    lat_arr = df[lat].to_numpy()
+    lon_arr = df[lon].to_numpy()
     date_arr = df[date].astype(str).to_numpy()
 
     # Single pass over rows, computing all requested models per row

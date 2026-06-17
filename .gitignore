@@ -8,9 +8,6 @@ dist/
 build/
 .eggs/
 
-# Vendored copy (magdec is now integrated directly as magdec/)
-_vendor/
-
 # QGIS / Qt
 *.qgc
 *.pyc

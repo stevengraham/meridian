@@ -25,6 +25,7 @@ _A4 = _A2 * _A2
 _B4 = _B2 * _B2
 _C4 = _A4 - _B4
 
+
 @dataclass
 class MagResult:
     """All magnetic field components at a single point."""
@@ -57,7 +58,7 @@ class WMM:
         self._buf_sp = [0.0] * sz
         self._buf_cp = [0.0] * sz
         self._buf_pp = [0.0] * sz
-        self._buf_p  = [[0.0] * sz for _ in range(sz)]
+        self._buf_p = [[0.0] * sz for _ in range(sz)]
         self._buf_dp = [[0.0] * sz for _ in range(sz)]
         self._buf_tc = [[0.0] * sz for _ in range(sz)]
 
@@ -73,7 +74,7 @@ class WMM:
                 if len(parts) == 3:
                     try:
                         self.epoch = float(parts[0])
-                        self.name  = parts[1]
+                        self.name = parts[1]
                     except ValueError:
                         pass
                 elif len(parts) == 6:
@@ -89,7 +90,7 @@ class WMM:
         def _z(r, c=None):
             return [[0.0] * (c or sz) for _ in range(r or sz)]
 
-        coef  = _z(sz)
+        coef = _z(sz)
         dcoef = _z(sz)
 
         # g(n,m)  stored at coef[m][n]   (lower triangle, m ≤ n)
@@ -97,40 +98,40 @@ class WMM:
         # Same scheme in dcoef for secular variation terms.
         for n, m, gnm, hnm, dgnm, dhnm in rows:
             if m <= n:
-                coef[m][n]  = gnm
+                coef[m][n] = gnm
                 dcoef[m][n] = dgnm
                 if m != 0:
-                    coef[n][m-1]  = hnm
-                    dcoef[n][m-1] = dhnm
+                    coef[n][m - 1] = hnm
+                    dcoef[n][m - 1] = dhnm
 
         snorm = _z(sz)
-        k     = _z(sz)
+        k = _z(sz)
         snorm[0][0] = 1.0
 
         fn = [0.0] + [float(n + 1) for n in range(1, maxord + 1)]
         fm = [float(m) for m in range(maxord + 1)]
 
         for n in range(1, maxord + 1):
-            snorm[0][n] = snorm[0][n-1] * (2.0*n - 1) / n
+            snorm[0][n] = snorm[0][n - 1] * (2.0 * n - 1) / n
             j = 2.0
             for m in range(n + 1):
-                k[m][n] = ((n-1)**2 - m**2) / ((2.0*n-1) * (2.0*n-3.0))
+                k[m][n] = ((n - 1)**2 - m**2) / ((2.0 * n - 1) * (2.0 * n - 3.0))
                 if m > 0:
                     flnmj = ((n - m + 1.0) * j) / (n + m)
-                    snorm[m][n] = snorm[m-1][n] * math.sqrt(flnmj)
+                    snorm[m][n] = snorm[m - 1][n] * math.sqrt(flnmj)
                     j = 1.0
-                    coef[n][m-1]  *= snorm[m][n]
-                    dcoef[n][m-1] *= snorm[m][n]
-                coef[m][n]  *= snorm[m][n]
+                    coef[n][m - 1] *= snorm[m][n]
+                    dcoef[n][m - 1] *= snorm[m][n]
+                coef[m][n] *= snorm[m][n]
                 dcoef[m][n] *= snorm[m][n]
 
         self._maxord = maxord
-        self._sz   = sz
-        self._c    = coef
-        self._cd   = dcoef
-        self._k    = k
-        self._fn   = fn
-        self._fm   = fm
+        self._sz = sz
+        self._c = coef
+        self._cd = dcoef
+        self._k = k
+        self._fn = fn
+        self._fm = fm
 
     # ------------------------------------------------------------------
     # public compute interface
@@ -163,37 +164,37 @@ class WMM:
         crlat2 = crlat * crlat
 
         # ----- geodetic → geocentric -----
-        q  = math.sqrt(_A2 - _C2 * srlat2)
+        q = math.sqrt(_A2 - _C2 * srlat2)
         q1 = alt_km * q
         q2 = ((q1 + _A2) / (q1 + _B2)) ** 2
         ct = srlat / math.sqrt(q2 * crlat2 + srlat2)
         st = math.sqrt(max(0.0, 1.0 - ct * ct))
-        r2 = alt_km**2 + 2.0*q1 + (_A4 - _C4*srlat2) / (q*q)
-        r  = math.sqrt(r2)
-        d  = math.sqrt(_A2*crlat2 + _B2*srlat2)
+        r2 = alt_km**2 + 2.0 * q1 + (_A4 - _C4 * srlat2) / (q * q)
+        r = math.sqrt(r2)
+        d = math.sqrt(_A2 * crlat2 + _B2 * srlat2)
         ca = (alt_km + d) / r
         sa = _C2 * crlat * srlat / (r * d)
 
         # ----- longitude trig -----
         # Use pre-allocated buffers (WMM instances are LRU-cached singletons)
-        sp = self._buf_sp;  cp = self._buf_cp
-        p  = self._buf_p;   dp = self._buf_dp
-        pp = self._buf_pp;  tc = self._buf_tc
+        sp = self._buf_sp; cp = self._buf_cp
+        p = self._buf_p; dp = self._buf_dp
+        pp = self._buf_pp; tc = self._buf_tc
 
-        sp[0] = 0.0;  cp[0] = 1.0
+        sp[0] = 0.0; cp[0] = 1.0
         sp[1] = math.sin(rlon)
         cp[1] = math.cos(rlon)
         for m in range(2, maxord + 1):
-            sp[m] = sp[1]*cp[m-1] + cp[1]*sp[m-1]
-            cp[m] = cp[1]*cp[m-1] - sp[1]*sp[m-1]
+            sp[m] = sp[1] * cp[m - 1] + cp[1] * sp[m - 1]
+            cp[m] = cp[1] * cp[m - 1] - sp[1] * sp[m - 1]
 
         # ----- Legendre functions and time-adjusted coefficients -----
         p[0][0] = 1.0
-        pp[0]   = 1.0
+        pp[0] = 1.0
 
         # ----- main SH loop -----
         aor = _RE / r
-        ar  = aor * aor
+        ar = aor * aor
         br = bt = bp = bpp = 0.0
 
         for n in range(1, maxord + 1):
@@ -201,21 +202,21 @@ class WMM:
             for m in range(n + 1):
                 # Legendre recursion
                 if n == m:
-                    p[m][n]  = st * p[m-1][n-1]
-                    dp[m][n] = st*dp[m-1][n-1] + ct*p[m-1][n-1]
+                    p[m][n] = st * p[m - 1][n - 1]
+                    dp[m][n] = st * dp[m - 1][n - 1] + ct * p[m - 1][n - 1]
                 elif n == 1 and m == 0:
-                    p[m][n]  = ct * p[m][n-1]
-                    dp[m][n] = ct*dp[m][n-1] - st*p[m][n-1]
+                    p[m][n] = ct * p[m][n - 1]
+                    dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1]
                 else:
-                    if m > n - 2: p[m][n-2]  = 0.0
-                    if m > n - 2: dp[m][n-2] = 0.0
-                    p[m][n]  = ct*p[m][n-1] - self._k[m][n]*p[m][n-2]
-                    dp[m][n] = ct*dp[m][n-1] - st*p[m][n-1] - self._k[m][n]*dp[m][n-2]
+                    if m > n - 2: p[m][n - 2] = 0.0
+                    if m > n - 2: dp[m][n - 2] = 0.0
+                    p[m][n] = ct * p[m][n - 1] - self._k[m][n] * p[m][n - 2]
+                    dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] - self._k[m][n] * dp[m][n - 2]
 
                 # Time-adjust coefficients
                 tc[m][n] = self._c[m][n] + dt * self._cd[m][n]
                 if m != 0:
-                    tc[n][m-1] = self._c[n][m-1] + dt * self._cd[n][m-1]
+                    tc[n][m - 1] = self._c[n][m - 1] + dt * self._cd[n][m - 1]
 
                 # Accumulate field
                 par = ar * p[m][n]
@@ -223,8 +224,8 @@ class WMM:
                     temp1 = tc[m][n] * cp[m]
                     temp2 = tc[m][n] * sp[m]
                 else:
-                    temp1 = tc[m][n]*cp[m] + tc[n][m-1]*sp[m]
-                    temp2 = tc[m][n]*sp[m] - tc[n][m-1]*cp[m]
+                    temp1 = tc[m][n] * cp[m] + tc[n][m - 1] * sp[m]
+                    temp2 = tc[m][n] * sp[m] - tc[n][m - 1] * cp[m]
 
                 bt -= ar * temp1 * dp[m][n]
                 bp += self._fm[m] * temp2 * par
@@ -233,9 +234,9 @@ class WMM:
                 # Pole special case
                 if st == 0.0 and m == 1:
                     if n == 1:
-                        pp[n] = pp[n-1]
+                        pp[n] = pp[n - 1]
                     else:
-                        pp[n] = ct*pp[n-1] - self._k[m][n]*pp[n-2]
+                        pp[n] = ct * pp[n - 1] - self._k[m][n] * pp[n - 2]
                     bpp += self._fm[m] * temp2 * ar * pp[n]
 
         if st == 0.0:
@@ -244,12 +245,12 @@ class WMM:
             bp /= st
 
         # ----- rotate to geodetic frame -----
-        X = -bt*ca - br*sa   # north component
+        X = -bt * ca - br * sa   # north component
         Y = bp                # east component
-        Z =  bt*sa - br*ca   # down component
+        Z = bt * sa - br * ca   # down component
 
-        H = math.sqrt(X*X + Y*Y)
-        F = math.sqrt(H*H + Z*Z)
+        H = math.sqrt(X * X + Y * Y)
+        F = math.sqrt(H * H + Z * Z)
         D = math.degrees(math.atan2(Y, X))
         I = math.degrees(math.atan2(Z, H))
 

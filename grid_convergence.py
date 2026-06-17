@@ -31,7 +31,7 @@ def _gc_from_transform(lon: float, lat: float, to_proj) -> float:
     the loop to avoid per-feature CRS/transform construction overhead.
     """
     lat_north = min(lat + 0.001, 89.999)   # clamp to avoid polar singularity
-    p       = to_proj.transform(QgsPointXY(lon, lat))
+    p = to_proj.transform(QgsPointXY(lon, lat))
     p_north = to_proj.transform(QgsPointXY(lon, lat_north))
     dE = p_north.x() - p.x()
     dN = p_north.y() - p.y()

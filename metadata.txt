@@ -1,7 +1,7 @@
 [general]
 name=Meridian
 qgisMinimumVersion=3.22
-qgisMaximumVersion=3.99
+qgisMaximumVersion=4.99
 description=Convert between magnetic, true and grid north for any location and date — fully offline.
 version=0.1.0
 author=Steve Graham
@@ -27,7 +27,6 @@ experimental=False
 deprecated=False
 server=False
 hasProcessingProvider=no
-supportsQt6=True
 
 changelog=
     0.1.0 — Initial release.
