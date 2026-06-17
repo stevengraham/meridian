@@ -250,6 +250,9 @@
 &lt;p&gt;As geologists we deal with azimuths a lot — compass readings, drill collar orientations, structural logging, downhole surveys. The reference for an azimuth is critical: is it relative to magnetic north, true north, or the grid system you're working in? When starting a new project, one of the first tasks is to orient yourself and work out the differences between these references and how to convert between them.&lt;/p&gt;
 &lt;p&gt;If they were static it would be easy — but the magnetic field changes over time, and there are models that predict its effect across the globe and across the years. Sometimes you don't just need today's difference, but what it was &lt;i&gt;when a hole was drilled&lt;/i&gt;, so you can verify the correct adjustment was made.&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;Meridian&lt;/b&gt; aims to make this job a little easier. Give it a lat/long, or pick a point off the map, and it returns the adjustments you need for the specified date. It will even drop all of the info into an image or PDF for your project documentation. And if you need to process an entire dataset, feed it a point or polygon layer and it will calculate the adjustments using a date field in your data — or a date you specify.&lt;/p&gt;
+&lt;p style="color:#666; font-size:8pt; margin-top:12px;"&gt;
+&lt;b&gt;Disclaimer:&lt;/b&gt; Magnetic declination values are derived from global geomagnetic models (WMM / WMMHR) and are approximations only. Local magnetic anomalies, crustal variations, and model limitations mean results may differ from observed values. Always cross-check critical figures against a trusted independent source before use in survey or safety-critical applications.
+&lt;/p&gt;
 &lt;hr/&gt;
 &lt;p&gt;
 &lt;b&gt;Author:&lt;/b&gt; Steve Graham&lt;br/&gt;
