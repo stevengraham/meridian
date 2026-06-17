@@ -55,7 +55,7 @@ class _ComputeTask(QgsTask):
         want_components,
         finished_cb,
     ):
-        super().__init__("North Corrections: computing…", QgsTask.CanCancel)
+        super().__init__("Meridian: computing…", QgsTask.CanCancel)
         self._feat_list = feat_list
         self._out_fields = out_fields
         self._out_name = out_name
@@ -99,7 +99,7 @@ class _ComputeTask(QgsTask):
 
             date_str = self._fallback_date
             if date_val is not None:
-                parsed = NorthCorrectionsDialog._parse_date_value(date_val)
+                parsed = MeridianDialog._parse_date_value(date_val)
                 if parsed:
                     date_str = parsed
 
@@ -208,6 +208,10 @@ class MeridianDialog(QDialog):
     def __init__(self, iface, parent=None):
         super().__init__(parent, Qt.Window)
         uic.loadUi(UI_FILE, self)
+        from qgis.PyQt.QtGui import QIcon
+        _icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
+        if os.path.exists(_icon_path):
+            self.setWindowIcon(QIcon(_icon_path))
         self.iface = iface
         self._click_tool = None
         self._prev_tool = None

@@ -1,17 +1,39 @@
 [general]
 name=Meridian
 qgisMinimumVersion=3.22
-description=Adds magnetic declination and grid convergence to point/polygon layers. Uses bundled WMM coefficient files — fully offline.
+qgisMaximumVersion=3.99
+description=Convert between magnetic, true and grid north for any location and date — fully offline.
 version=0.1.0
 author=Steve Graham
 email=stevengraham84@gmail.com
-about=Computes magnetic declination (D) from bundled WMM epochs (WMM2010–WMMHR2025) and grid convergence (γ) from the layer CRS for any point or polygon layer. Outputs a copy of the layer with mag_decl, grid_conv, and grid magnetic angle (GMA) fields appended. Supports per-feature date fields and multiple simultaneous models.
-tracker=
-repository=
-tags=magnetic declination,grid convergence,north correction,survey,geophysics
-homepage=
+about=As geologists we deal with azimuths a lot — compass readings, drill collar orientations, structural logging, downhole surveys. The reference for an azimuth is critical: is it relative to magnetic north, true north, or the grid system you're working in? When starting a new project, one of the first tasks is to orient yourself and work out the differences between these references and how to convert between them.
+
+    If they were static it would be easy — but the magnetic field changes over time, and there are models that predict its effect across the globe and across the years. Sometimes you don't just need today's difference, but what it was when a hole was drilled, so you can verify the correct adjustment was made.
+
+    Meridian aims to make this job a little easier. Give it a lat/long, or pick a point off the map, and it returns the adjustments you need for the specified date. It will even drop all of the info into an image or PDF for your project documentation. And if you need to process an entire dataset, feed it a point or polygon layer and it will calculate the adjustments using a date field in your data — or a date you specify.
+
+tracker=https://github.com/stevengraham/meridian/issues
+repository=https://github.com/stevengraham/meridian
+homepage=https://github.com/stevengraham/meridian
+
+tags=magnetic declination,grid convergence,north correction,WMM,survey,geophysics,compass,azimuth,bearing
+
 category=Vector
 icon=icon.png
+
 experimental=False
 deprecated=False
+server=False
 hasProcessingProvider=no
+supportsQt6=True
+
+changelog=
+    0.1.0 — Initial release.
+        Bundled WMM2010, WMM2015v2, WMM2020, WMMHR2025 coefficient files.
+        Auto, All, and Specific model modes.
+        Per-feature date field parsing (11 formats including DD/MM/YYYY).
+        Grid convergence computed numerically from layer CRS.
+        Background QgsTask for WMMHR2025 datasets.
+        Full component output (I, H, F, X, Y, Z).
+        PDF/PNG north-arrow report with worked examples.
+        Map-click tool for manual point entry.
