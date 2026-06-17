@@ -4,6 +4,7 @@ cached model instance.
 """
 
 import os
+import warnings
 from functools import lru_cache
 from ._wmm import WMM, _decimal_year, _DATA_DIR
 
@@ -43,15 +44,27 @@ def available_models() -> list[str]:
 
 
 def model_for_date(date_str: str) -> WMM:
-    """Return the WMM model appropriate for *date_str* ('YYYY-MM-DD')."""
+    """Return the WMM model appropriate for *date_str* ('YYYY-MM-DD').
+
+    Falls back to the nearest available epoch when the date is outside all
+    known ranges; a UserWarning is issued in that case.
+    """
     dy = _decimal_year(date_str)
     for start, end, name, fname in _AVAILABLE:
         if start <= dy < end:
             return _get_model(fname)
-    # Fall back to the nearest available model rather than raising
-    if dy >= _AVAILABLE[0][1]:         # beyond the newest epoch end
+    # Date is outside all known epochs — warn and use nearest boundary model
+    all_start = _AVAILABLE[-1][0]
+    all_end   = _AVAILABLE[0][1]
+    warnings.warn(
+        f"Date '{date_str}' (decimal {dy:.3f}) is outside all available WMM epochs "
+        f"({all_start:.1f}–{all_end:.1f}). Results may be inaccurate.",
+        UserWarning,
+        stacklevel=3,
+    )
+    if dy >= all_end:
         return _get_model(_AVAILABLE[0][3])
-    return _get_model(_AVAILABLE[-1][3])  # before the oldest epoch
+    return _get_model(_AVAILABLE[-1][3])
 
 
 def get_model(name: str) -> WMM:

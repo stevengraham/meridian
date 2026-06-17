@@ -10,6 +10,7 @@ multi-epoch support.  The mathematics follow the WMM Technical Note
 import math
 import os
 from dataclasses import dataclass
+from datetime import date as _date
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -52,6 +53,13 @@ class WMM:
 
     def __init__(self, cof_path: str):
         self._load(cof_path)
+        sz = self._sz
+        self._buf_sp = [0.0] * sz
+        self._buf_cp = [0.0] * sz
+        self._buf_pp = [0.0] * sz
+        self._buf_p  = [[0.0] * sz for _ in range(sz)]
+        self._buf_dp = [[0.0] * sz for _ in range(sz)]
+        self._buf_tc = [[0.0] * sz for _ in range(sz)]
 
     # ------------------------------------------------------------------
     # coefficient loading
@@ -84,6 +92,9 @@ class WMM:
         coef  = _z(sz)
         dcoef = _z(sz)
 
+        # g(n,m)  stored at coef[m][n]   (lower triangle, m ≤ n)
+        # h(n,m)  stored at coef[n][m-1] (upper triangle, repurposed row n, col m-1)
+        # Same scheme in dcoef for secular variation terms.
         for n, m, gnm, hnm, dgnm, dhnm in rows:
             if m <= n:
                 coef[m][n]  = gnm
@@ -114,6 +125,7 @@ class WMM:
                 dcoef[m][n] *= snorm[m][n]
 
         self._maxord = maxord
+        self._sz   = sz
         self._c    = coef
         self._cd   = dcoef
         self._k    = k
@@ -163,8 +175,11 @@ class WMM:
         sa = _C2 * crlat * srlat / (r * d)
 
         # ----- longitude trig -----
-        sz = maxord + 2
-        sp = [0.0] * sz;  cp = [0.0] * sz
+        # Use pre-allocated buffers (WMM instances are LRU-cached singletons)
+        sp = self._buf_sp;  cp = self._buf_cp
+        p  = self._buf_p;   dp = self._buf_dp
+        pp = self._buf_pp;  tc = self._buf_tc
+
         sp[0] = 0.0;  cp[0] = 1.0
         sp[1] = math.sin(rlon)
         cp[1] = math.cos(rlon)
@@ -173,10 +188,6 @@ class WMM:
             cp[m] = cp[1]*cp[m-1] - sp[1]*sp[m-1]
 
         # ----- Legendre functions and time-adjusted coefficients -----
-        p  = [[0.0] * sz for _ in range(sz)]
-        dp = [[0.0] * sz for _ in range(sz)]
-        pp = [0.0] * sz
-        tc = [[0.0] * sz for _ in range(sz)]
         p[0][0] = 1.0
         pp[0]   = 1.0
 
@@ -187,9 +198,7 @@ class WMM:
 
         for n in range(1, maxord + 1):
             ar *= aor
-            m  = 0
-            D4 = n + m + 1
-            while D4 > 0:
+            for m in range(n + 1):
                 # Legendre recursion
                 if n == m:
                     p[m][n]  = st * p[m-1][n-1]
@@ -229,9 +238,6 @@ class WMM:
                         pp[n] = ct*pp[n-1] - self._k[m][n]*pp[n-2]
                     bpp += self._fm[m] * temp2 * ar * pp[n]
 
-                D4 -= 1
-                m  += 1
-
         if st == 0.0:
             bp = bpp
         else:
@@ -258,8 +264,7 @@ class WMM:
 def _decimal_year(date_str: str) -> float:
     """Convert 'YYYY-MM-DD' to decimal year."""
     y, m, d = (int(x) for x in date_str.split("-"))
-    from datetime import date
-    dt = date(y, m, d)
+    dt = _date(y, m, d)
     doy = dt.timetuple().tm_yday
     days = 366 if (y % 4 == 0 and (y % 100 != 0 or y % 400 == 0)) else 365
     return y + (doy - 1) / days

@@ -1,3 +1,4 @@
+import math
 import os
 from datetime import date, datetime
 
@@ -14,7 +15,7 @@ from qgis.core import (
 )
 
 from . import magdec
-from .grid_convergence import compute_grid_convergence
+from .grid_convergence import compute_grid_convergence, _gc_from_transform
 from .map_click_tool import NorthClickTool
 from .report import save_report as _save_report_file
 
@@ -78,6 +79,9 @@ class _ComputeTask(QgsTask):
         wgs84 = QgsCoordinateReferenceSystem("EPSG:4326")
         layer_crs = QgsCoordinateReferenceSystem(self._layer_crs_authid)
         transform = QgsCoordinateTransform(layer_crs, wgs84, QgsProject.instance())
+        # Pre-build the wgs84→layer transform for grid convergence (avoids per-feature construction)
+        gc_transform = (None if layer_crs.isGeographic()
+                        else QgsCoordinateTransform(wgs84, layer_crs, QgsProject.instance()))
         total = len(self._feat_list)
 
         for i, item in enumerate(self._feat_list):
@@ -103,10 +107,11 @@ class _ComputeTask(QgsTask):
                 if parsed:
                     date_str = parsed
 
-            gamma = compute_grid_convergence(lon, lat, layer_crs, QgsProject.instance())
+            gamma = _gc_from_transform(lon, lat, gc_transform) if gc_transform is not None else None
 
             mode = self._mode
             model_names = self._model_names
+            feature_failed = False
 
             if mode == "auto":
                 try:
@@ -114,7 +119,7 @@ class _ComputeTask(QgsTask):
                     decl_auto, actual_model, comps_auto = r.D, r.model, r
                 except Exception:
                     decl_auto = actual_model = comps_auto = None
-                    self._errors += 1
+                    feature_failed = True
 
             elif mode == "all":
                 all_d: dict = {}
@@ -130,7 +135,7 @@ class _ComputeTask(QgsTask):
                     except Exception:
                         all_d[m] = None
                         comps_all[m] = None
-                        self._errors += 1
+                        feature_failed = True
 
             else:  # specific
                 m = model_names[0]
@@ -143,7 +148,10 @@ class _ComputeTask(QgsTask):
                         comps_spec = None
                 except Exception:
                     d_specific = comps_spec = None
-                    self._errors += 1
+                    feature_failed = True
+
+            if feature_failed:
+                self._errors += 1
 
             new_attrs = list(attrs)
 
@@ -261,6 +269,9 @@ class MeridianDialog(QDialog):
         self._on_layer_changed()
 
     def _wire_signals(self):
+        QgsProject.instance().layerWasAdded.connect(self._populate_layers)
+        QgsProject.instance().layerWillBeRemoved.connect(self._populate_layers)
+
         self.rbLayer.toggled.connect(self._on_source_mode_changed)
         self.rbManual.toggled.connect(self._on_source_mode_changed)
 
@@ -398,7 +409,7 @@ class MeridianDialog(QDialog):
                 r = None
                 actual_model = model_name
 
-            gma = (d - gamma) if (gamma is not None and d == d) else float("nan")
+            gma = (d - gamma) if (gamma is not None and not math.isnan(d)) else float("nan")
             display_model = actual_model if model_name == "auto" else model_name
 
             row = self.resultsTable.rowCount()
@@ -418,7 +429,7 @@ class MeridianDialog(QDialog):
                 self.resultsTable.setItem(row, 9, QTableWidgetItem(f"{r.Z:.2f}"))
 
             # Capture the first valid result for the report
-            if first_result is None and d == d:  # not NaN
+            if first_result is None and not math.isnan(d):
                 first_result = {
                     "lat": lat,
                     "lon": lon,
@@ -573,6 +584,8 @@ class MeridianDialog(QDialog):
     def _on_layer_compute_finished(
         self, out_feats, errors, out_name, out_fields, out_wkb_type, out_crs, success
     ):
+        if self._active_task is None:  # dialog was closed/cancelled before task finished
+            return
         self._active_task = None
         self.btnCompute.setEnabled(True)
 
@@ -693,6 +706,14 @@ class MeridianDialog(QDialog):
 
     def closeEvent(self, event):
         self._deactivate_click_tool()
+        if self._active_task is not None:
+            self._active_task.cancel()
+            self._active_task = None
+        try:
+            QgsProject.instance().layerWasAdded.disconnect(self._populate_layers)
+            QgsProject.instance().layerWillBeRemoved.disconnect(self._populate_layers)
+        except (TypeError, RuntimeError):
+            pass
         super().closeEvent(event)
 
     def _deactivate_click_tool(self):

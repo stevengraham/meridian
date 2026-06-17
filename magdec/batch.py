@@ -53,7 +53,7 @@ def declination_batch(
     Returns
     -------
     pd.DataFrame
-        Copy of *df* with added column(s) named ``declination`` (for
+        Copy of *df* with added column(s) named ``{field}_auto`` (for
         ``'auto'``) or ``{field}_{model_name}`` (for multi-model runs).
     """
     try:
@@ -72,29 +72,38 @@ def declination_batch(
     else:
         model_list = list(models)
 
-    for model_name in model_list:
-        col = "declination" if model_name == "auto" else f"{field}_{model_name}"
-        results = []
-        for _, row in df.iterrows():
-            lat_v  = float(row[lat])
-            lon_v  = float(row[lon])
-            date_v = str(row[date])
+    # Pre-resolve altitude to a per-row array (avoids repeated isinstance checks)
+    if alt_m is not None:
+        if isinstance(alt_m, str):
+            alt_arr = df[alt_m].to_numpy() / 1000.0
+        else:
+            scalar_km = float(alt_m) / 1000.0
+            alt_arr = [scalar_km] * len(df)
+    elif isinstance(alt_km, str):
+        alt_arr = df[alt_km].to_numpy()
+    else:
+        scalar_km = float(alt_km)
+        alt_arr = [scalar_km] * len(df)
 
-            if alt_m is not None:
-                h = float(row[alt_m]) / 1000.0 if isinstance(alt_m, str) else float(alt_m) / 1000.0
-            elif isinstance(alt_km, str):
-                h = float(row[alt_km])
-            else:
-                h = float(alt_km)
+    lat_arr  = df[lat].to_numpy()
+    lon_arr  = df[lon].to_numpy()
+    date_arr = df[date].astype(str).to_numpy()
 
+    # Single pass over rows, computing all requested models per row
+    results: dict[str, list] = {m: [] for m in model_list}
+
+    for lat_v, lon_v, date_v, h in zip(lat_arr, lon_arr, date_arr, alt_arr):
+        lat_f, lon_f, h_f = float(lat_v), float(lon_v), float(h)
+        for model_name in model_list:
             if model_name == "auto":
                 mdl = model_for_date(date_v)
             else:
                 mdl = get_model(model_name)
+            res: MagResult = mdl.compute(lat_f, lon_f, h_f, date_v)
+            results[model_name].append(getattr(res, field))
 
-            res: MagResult = mdl.compute(lat_v, lon_v, h, date_v)
-            results.append(getattr(res, field))
-
-        df[col] = results
+    for model_name in model_list:
+        col = f"{field}_auto" if model_name == "auto" else f"{field}_{model_name}"
+        df[col] = results[model_name]
 
     return df

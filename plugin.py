@@ -33,6 +33,10 @@ class MeridianPlugin:
         self.iface.removePluginVectorMenu("&Meridian", self._action)
         self.iface.removeToolBarIcon(self._action)
         if self._dialog is not None:
+            active = getattr(self._dialog, '_active_task', None)
+            if active is not None:
+                active.cancel()
+                self._dialog._active_task = None
             self._dialog.close()
             self._dialog = None
 

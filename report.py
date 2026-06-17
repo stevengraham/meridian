@@ -192,13 +192,13 @@ def _draw_north_diagram(ax, declination, grid_convergence):
 
 # ── info table axes ───────────────────────────────────────────────────────────
 
-def _draw_info_table(ax, lat, lon, date_str, model, crs_name,
-                     declination, grid_convergence, components=None):
-    """Render a styled parameter/value table on ax."""
-    ax.axis("off")
+def _build_table_rows(lat, lon, date_str, model, crs_name,
+                      declination, grid_convergence, components=None):
+    """Build the list of [param, value] rows for the info table.
 
+    Single source of truth used by both _draw_info_table and _table_rows.
+    """
     gma = (declination - grid_convergence) if grid_convergence is not None else None
-
     rows = [
         ["Latitude",              f"{lat:+.6f}°"],
         ["Longitude",             f"{lon:+.6f}°"],
@@ -222,6 +222,16 @@ def _draw_info_table(ax, lat, lon, date_str, model, crs_name,
         rows.append(["North component  X",      f"{components['X']:.2f} nT"])
         rows.append(["East component  Y",       f"{components['Y']:.2f} nT"])
         rows.append(["Vertical component  Z",   f"{components['Z']:.2f} nT"])
+    return rows
+
+
+def _draw_info_table(ax, lat, lon, date_str, model, crs_name,
+                     declination, grid_convergence, components=None):
+    """Render a styled parameter/value table on ax."""
+    ax.axis("off")
+
+    rows = _build_table_rows(lat, lon, date_str, model, crs_name,
+                             declination, grid_convergence, components)
 
     col_labels = ["Parameter", "Value"]
     tbl = ax.table(
@@ -352,7 +362,7 @@ def north_diagram_figure(
         )
 
     fig = Figure(figsize=(8.5, 11.0), facecolor="white")
-    FigureCanvasAgg(fig)  # attach a canvas so savefig works
+    canvas = FigureCanvasAgg(fig)  # store reference so fig stays attached
 
     # ── header ──
     fig.text(0.50, 0.965, "North Relationships",
@@ -376,39 +386,39 @@ def north_diagram_figure(
         )
     )
 
-    # ── diagram axes ── (shortened to leave room for worked examples)
-    ax_diag = fig.add_axes([0.07, 0.35, 0.86, 0.53])
+    # ── dynamic layout: compute table height from actual row count ──
+    # +1 for the header row; 0.016 per row; no upper clamp so all rows are visible
+    n_rows = 1 + len(_table_rows(
+        lat, lon, date_str, model, crs_name, declination, grid_convergence, components
+    ))
+    table_height  = max(0.14, 0.05 + n_rows * 0.016)
+    examples_bot  = 0.02 + table_height + 0.01
+    examples_top  = examples_bot + 0.11
+    diag_bot      = examples_top + 0.005
+    diag_height   = max(0.30, 0.905 - diag_bot)
+
+    # ── diagram axes ──
+    ax_diag = fig.add_axes([0.07, diag_bot, 0.86, diag_height])
     _draw_north_diagram(ax_diag, declination, grid_convergence)
 
     # ── worked examples ── (between diagram and table)
     _add_worked_examples(fig, declination, grid_convergence, annual_rate,
-                         y_top=0.335, y_bottom=0.225)
+                         y_top=examples_top, y_bottom=examples_bot)
 
     # ── table axes ──
-    table_height = 0.06 + (len([r for r in _table_rows(
-        lat, lon, date_str, model, crs_name, declination, grid_convergence, components
-    )]) + 1) * 0.018
-    table_height = max(0.16, min(table_height, 0.20))
     ax_tbl = fig.add_axes([0.07, 0.02, 0.86, table_height])
     _draw_info_table(ax_tbl, lat, lon, date_str, model, crs_name,
                      declination, grid_convergence, components)
 
+    _ = canvas  # prevent GC of canvas before savefig
     return fig
 
 
 def _table_rows(lat, lon, date_str, model, crs_name,
                 declination, grid_convergence, components):
-    """Return row count helper (mirrors _draw_info_table logic)."""
-    rows = [None] * 4
-    if crs_name:
-        rows.append(None)
-    rows.append(None)  # separator
-    rows.append(None)  # D
-    if grid_convergence is not None:
-        rows += [None, None]  # γ, GMA
-    if components:
-        rows += [None] * 7  # separator + 6 components
-    return rows
+    """Return the table rows list (delegates to _build_table_rows for single source of truth)."""
+    return _build_table_rows(lat, lon, date_str, model, crs_name,
+                             declination, grid_convergence, components)
 
 
 def save_report(path: str, fmt: str, **kwargs) -> None:

@@ -1,8 +1,9 @@
 """
 magdec — offline magnetic declination for single points and DataFrames.
 
-Bundled models: WMM2010, WMM2015v2, WMM2020 (WMM2025 auto-used when you
-place WMM2025.COF in magdec/data/).
+Bundled models: WMM2010, WMM2015v2, WMM2020, WMMHR2025 (high-resolution,
+n=133, default for 2025–2030).  Additional epochs can be added by placing
+a WMM*.COF file in magdec/data/ — see data/WMM2025.md.
 
 Quick start
 -----------
@@ -10,10 +11,15 @@ Quick start
 >>> magdec.declination(-31.95, 115.86, '2024-06-17')     # Perth, WA
 1.76...
 >>> magdec.declination(-31.95, 115.86, '2024-06-17', model='all')
-{'WMM2020': 1.76..., 'WMM2015v2': ..., 'WMM2010': ...}
+{'WMMHR2025': ..., 'WMM2020': 1.76..., 'WMM2015v2': ..., 'WMM2010': ...}
 >>> result = magdec.components(-31.95, 115.86, '2024-06-17')
 >>> result.D, result.F
 (1.76..., 57234.3...)
+
+Batch (pandas)
+--------------
+>>> out = magdec.declination_batch(df, lat='lat', lon='lon', date='date')
+# adds column 'D_auto'; use field='F' etc. for other components
 """
 
 from ._wmm import MagResult
