@@ -4,7 +4,7 @@ from datetime import date, datetime
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, QDate, QVariant
 from qgis.PyQt.QtWidgets import (
-    QApplication, QButtonGroup, QDialog, QTableWidgetItem
+    QButtonGroup, QDialog, QTableWidgetItem
 )
 from qgis.core import (
     QgsProject, QgsWkbTypes, QgsVectorLayer,
@@ -15,8 +15,8 @@ from qgis.core import (
 
 from . import magdec
 from .grid_convergence import compute_grid_convergence
-from .map_click_tool import NorthClickTool  # noqa: E402
-from .report import save_report as _save_report_file  # noqa: E402
+from .map_click_tool import NorthClickTool
+from .report import save_report as _save_report_file
 
 UI_FILE = os.path.join(os.path.dirname(__file__), "dialog_base.ui")
 
@@ -331,7 +331,7 @@ class MeridianDialog(QDialog):
             self._click_tool.deactivated.connect(self._deactivate_click_tool)
             canvas.setMapTool(self._click_tool)
             self.iface.messageBar().pushInfo(
-                "North Corrections", "Click the map to pick a point."
+                "Meridian", "Click the map to pick a point."
             )
         else:
             self._deactivate_click_tool()
@@ -460,7 +460,7 @@ class MeridianDialog(QDialog):
 
         layer = self._current_layer()
         if layer is None:
-            QMessageBox.warning(self, "North Corrections", "No layer selected.")
+            QMessageBox.warning(self, "Meridian", "No layer selected.")
             return
 
         fallback_date = self.dateEdit.date().toString("yyyy-MM-dd")
@@ -540,12 +540,12 @@ class MeridianDialog(QDialog):
             })
 
         if not feat_list:
-            QMessageBox.information(self, "North Corrections", "No valid features found.")
+            QMessageBox.information(self, "Meridian", "No valid features found.")
             return
 
         self.btnCompute.setEnabled(False)
         self.iface.messageBar().pushInfo(
-            "North Corrections",
+            "Meridian",
             f"Computing for {len(feat_list)} features… (see task manager)"
         )
 
@@ -577,7 +577,7 @@ class MeridianDialog(QDialog):
 
         if not success:
             self.iface.messageBar().pushWarning(
-                "North Corrections", "Computation cancelled."
+                "Meridian", "Computation cancelled."
             )
             return
 
@@ -586,7 +586,7 @@ class MeridianDialog(QDialog):
         )
         if not out_layer.isValid():
             self.iface.messageBar().pushCritical(
-                "North Corrections", "Failed to create output layer."
+                "Meridian", "Failed to create output layer."
             )
             return
 
@@ -597,7 +597,7 @@ class MeridianDialog(QDialog):
         msg = f"Added '{out_layer.name()}' with {len(out_feats)} features."
         if errors:
             msg += f" ({errors} skipped due to errors)"
-        self.iface.messageBar().pushSuccess("North Corrections", msg)
+        self.iface.messageBar().pushSuccess("Meridian", msg)
 
     # ------------------------------------------------------------------
     # Report export
@@ -625,12 +625,12 @@ class MeridianDialog(QDialog):
         try:
             _save_report_file(path, fmt, **self._last_result)
             self.iface.messageBar().pushSuccess(
-                "North Corrections",
+                "Meridian",
                 f"Report saved: {path}",
             )
         except Exception as exc:
             QMessageBox.critical(
-                self, "North Corrections",
+                self, "Meridian",
                 f"Failed to save report:\n{exc}",
             )
 
