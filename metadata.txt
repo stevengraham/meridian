@@ -12,6 +12,8 @@ about=As geologists we deal with azimuths a lot — compass readings, drill coll
 
     Meridian aims to make this job a little easier. Give it a lat/long, or pick a point off the map, and it returns the adjustments you need for the specified date. It will even drop all of the info into an image or PDF for your project documentation. And if you need to process an entire dataset, feed it a point or polygon layer and it will calculate the adjustments using a date field in your data — or a date you specify.
 
+    Disclaimer: Values are derived from global geomagnetic models (WMM/WMMHR) and are approximations only. Local magnetic anomalies and model limitations mean results may differ from observed values. Always cross-check critical figures against a trusted independent source before use in survey or safety-critical applications.
+
 tracker=https://github.com/stevengraham/meridian/issues
 repository=https://github.com/stevengraham/meridian
 homepage=https://github.com/stevengraham/meridian

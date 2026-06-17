@@ -63,6 +63,13 @@ then enable it under **Plugins → Manage and Install Plugins → Installed**.
 
 - QGIS 3.22 or newer (Qt5 and Qt6 supported).
 
+## Disclaimer
+
+Magnetic declination values are derived from global geomagnetic models (WMM / WMMHR) and are
+approximations only. Local magnetic anomalies, crustal variations, and model limitations mean
+results may differ from observed values. Always cross-check critical figures against a trusted
+independent source before use in survey or safety-critical applications.
+
 ## Licence
 
 GNU General Public License v2 — see [LICENSE](LICENSE).
