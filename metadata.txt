@@ -1,0 +1,17 @@
+[general]
+name=Meridian
+qgisMinimumVersion=3.22
+description=Adds magnetic declination and grid convergence to point/polygon layers. Uses bundled WMM coefficient files — fully offline.
+version=0.1.0
+author=Steve Graham
+email=stevengraham84@gmail.com
+about=Computes magnetic declination (D) from bundled WMM epochs (WMM2010–WMMHR2025) and grid convergence (γ) from the layer CRS for any point or polygon layer. Outputs a copy of the layer with mag_decl, grid_conv, and grid magnetic angle (GMA) fields appended. Supports per-feature date fields and multiple simultaneous models.
+tracker=
+repository=
+tags=magnetic declination,grid convergence,north correction,survey,geophysics
+homepage=
+category=Vector
+icon=icon.png
+experimental=False
+deprecated=False
+hasProcessingProvider=no

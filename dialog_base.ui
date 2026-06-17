@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NorthCorrectionsDialogBase</class>
+ <widget class="QDialog" name="NorthCorrectionsDialogBase">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>440</width><height>640</height></rect>
+  </property>
+  <property name="windowTitle">
+   <string>North Corrections</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="spacing"><number>8</number></property>
+   <property name="leftMargin"><number>10</number></property>
+   <property name="topMargin"><number>10</number></property>
+   <property name="rightMargin"><number>10</number></property>
+   <property name="bottomMargin"><number>10</number></property>
+
+   <!-- ===== SOURCE ===== -->
+   <item>
+    <widget class="QGroupBox" name="grpSource">
+     <property name="title"><string>Source</string></property>
+     <layout class="QVBoxLayout" name="sourceLayout">
+      <property name="spacing"><number>6</number></property>
+
+      <!-- Layer row -->
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QRadioButton" name="rbLayer"><property name="text"><string>Layer</string></property><property name="checked"><bool>true</bool></property></widget></item>
+        <item><widget class="QComboBox" name="layerCombo"><property name="sizePolicy"><sizepolicy hsizetype="Expanding" vsizetype="Fixed"><horstretch>1</horstretch><verstretch>0</verstretch></sizepolicy></property></widget></item>
+       </layout>
+      </item>
+
+      <!-- Geometry type row (indented, enabled only when Layer selected) -->
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QLabel" name="lblGeomType"><property name="text"><string>    Geometry:</string></property></widget></item>
+        <item><widget class="QRadioButton" name="rbPoints"><property name="text"><string>Points</string></property><property name="checked"><bool>true</bool></property></widget></item>
+        <item><widget class="QRadioButton" name="rbPolygons"><property name="text"><string>Polygons (pointOnSurface)</string></property></widget></item>
+        <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer></item>
+       </layout>
+      </item>
+
+      <!-- Manual row -->
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QRadioButton" name="rbManual"><property name="text"><string>Manual</string></property></widget></item>
+        <item><widget class="QLabel" name="lblLat"><property name="text"><string>Lat:</string></property></widget></item>
+        <item>
+         <widget class="QDoubleSpinBox" name="spinLat">
+          <property name="minimum"><double>-90.0</double></property>
+          <property name="maximum"><double>90.0</double></property>
+          <property name="decimals"><number>6</number></property>
+          <property name="singleStep"><double>0.001</double></property>
+          <property name="enabled"><bool>false</bool></property>
+         </widget>
+        </item>
+        <item><widget class="QLabel" name="lblLon"><property name="text"><string>Lon:</string></property></widget></item>
+        <item>
+         <widget class="QDoubleSpinBox" name="spinLon">
+          <property name="minimum"><double>-180.0</double></property>
+          <property name="maximum"><double>180.0</double></property>
+          <property name="decimals"><number>6</number></property>
+          <property name="singleStep"><double>0.001</double></property>
+          <property name="enabled"><bool>false</bool></property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+
+      <!-- Map click row -->
+      <item>
+       <layout class="QHBoxLayout">
+        <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>80</width><height>0</height></size></property></spacer></item>
+        <item>
+         <widget class="QPushButton" name="btnPickFromMap">
+          <property name="text"><string>⊕ Pick from map</string></property>
+          <property name="enabled"><bool>false</bool></property>
+          <property name="checkable"><bool>true</bool></property>
+         </widget>
+        </item>
+        <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer></item>
+       </layout>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <!-- ===== DATE ===== -->
+   <item>
+    <widget class="QGroupBox" name="grpDate">
+     <property name="title"><string>Date</string></property>
+     <layout class="QVBoxLayout" name="dateLayout">
+      <property name="spacing"><number>6</number></property>
+
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QRadioButton" name="rbSingleDate"><property name="text"><string>Single date</string></property><property name="checked"><bool>true</bool></property></widget></item>
+        <item>
+         <widget class="QDateEdit" name="dateEdit">
+          <property name="calendarPopup"><bool>true</bool></property>
+          <property name="displayFormat"><string>yyyy-MM-dd</string></property>
+         </widget>
+        </item>
+        <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer></item>
+       </layout>
+      </item>
+
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QRadioButton" name="rbDateField"><property name="text"><string>Date field</string></property></widget></item>
+        <item><widget class="QComboBox" name="dateFieldCombo"><property name="enabled"><bool>false</bool></property><property name="sizePolicy"><sizepolicy hsizetype="Expanding" vsizetype="Fixed"><horstretch>1</horstretch><verstretch>0</verstretch></sizepolicy></property></widget></item>
+       </layout>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <!-- ===== MODEL ===== -->
+   <item>
+    <widget class="QGroupBox" name="grpModel">
+     <property name="title"><string>Model</string></property>
+     <layout class="QVBoxLayout" name="modelLayout">
+      <property name="spacing"><number>6</number></property>
+
+      <item><widget class="QRadioButton" name="rbModelAuto"><property name="text"><string>Auto (best epoch for date)</string></property><property name="checked"><bool>true</bool></property></widget></item>
+      <item><widget class="QRadioButton" name="rbModelAll"><property name="text"><string>All models (one column per model)</string></property></widget></item>
+
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QRadioButton" name="rbModelSpecific"><property name="text"><string>Specific</string></property></widget></item>
+        <item><widget class="QComboBox" name="modelCombo"><property name="enabled"><bool>false</bool></property><property name="sizePolicy"><sizepolicy hsizetype="Expanding" vsizetype="Fixed"><horstretch>1</horstretch><verstretch>0</verstretch></sizepolicy></property></widget></item>
+       </layout>
+      </item>
+
+      <item>
+       <widget class="QLabel" name="lblWmmhrWarning">
+        <property name="text"><string>⚠ WMMHR2025 selected — degree-133 model, ~50× slower than WMM2020.</string></property>
+        <property name="wordWrap"><bool>true</bool></property>
+        <property name="visible"><bool>false</bool></property>
+        <property name="styleSheet"><string>color: #b45309; background: #fef3c7; padding: 4px; border-radius: 3px;</string></property>
+       </widget>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <!-- ===== OUTPUT ===== -->
+   <item>
+    <widget class="QGroupBox" name="grpOutput">
+     <property name="title"><string>Output fields</string></property>
+     <layout class="QVBoxLayout" name="outputLayout">
+      <property name="spacing"><number>4</number></property>
+
+      <item><widget class="QCheckBox" name="chkDeclination"><property name="text"><string>Magnetic declination D  (mag_decl_*)</string></property><property name="checked"><bool>true</bool></property></widget></item>
+      <item><widget class="QCheckBox" name="chkGridConv"><property name="text"><string>Grid convergence γ  (grid_conv)</string></property><property name="checked"><bool>true</bool></property></widget></item>
+      <item><widget class="QCheckBox" name="chkGma"><property name="text"><string>Grid magnetic angle GMA  (gma_*)</string></property><property name="checked"><bool>true</bool></property></widget></item>
+      <item><widget class="QCheckBox" name="chkComponents"><property name="text"><string>Full components  (I, H, F, X, Y, Z)</string></property><property name="checked"><bool>false</bool></property></widget></item>
+
+      <item>
+       <layout class="QHBoxLayout">
+        <item><widget class="QLabel" name="lblOutputName"><property name="text"><string>Output layer name:</string></property></widget></item>
+        <item><widget class="QLineEdit" name="editOutputName"><property name="text"><string>north_corrections_output</string></property></widget></item>
+       </layout>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <!-- ===== BUTTONS ===== -->
+   <item>
+    <layout class="QHBoxLayout">
+     <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer></item>
+     <item>
+      <widget class="QPushButton" name="btnClose">
+       <property name="text"><string>Close</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCompute">
+       <property name="text"><string>Compute</string></property>
+       <property name="default"><bool>true</bool></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <!-- ===== RESULTS (manual/map-click only) ===== -->
+   <item>
+    <widget class="QGroupBox" name="grpResults">
+     <property name="title"><string>Results</string></property>
+     <property name="visible"><bool>false</bool></property>
+     <layout class="QVBoxLayout" name="resultsLayout">
+      <item>
+       <widget class="QTableWidget" name="resultsTable">
+        <property name="alternatingRowColors"><bool>true</bool></property>
+        <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+        <property name="selectionMode"><set>QAbstractItemView::NoSelection</set></property>
+        <column><property name="text"><string>Model</string></property></column>
+        <column><property name="text"><string>Magnetic Declination (°E)</string></property></column>
+        <column><property name="text"><string>Grid Convergence (°E)</string></property></column>
+        <column><property name="text"><string>Grid Magnetic Angle (°)</string></property></column>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout">
+        <item><spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer></item>
+        <item>
+         <widget class="QPushButton" name="btnSavePng">
+          <property name="text"><string>Save PNG…</string></property>
+          <property name="enabled"><bool>false</bool></property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnSavePdf">
+          <property name="text"><string>Save PDF…</string></property>
+          <property name="enabled"><bool>false</bool></property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
