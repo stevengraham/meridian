@@ -2,7 +2,7 @@
 name=Meridian
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
-description=Convert between magnetic, true and grid north for any location and date — fully offline.
+description=Convert between magnetic, true and grid north for any location and date (1900–2030) — fully offline, using WMM, WMMHR and IGRF-14 models.
 version=0.1.0
 author=Steve Graham
 email=stevengraham84@gmail.com
@@ -12,13 +12,13 @@ about=As geologists we deal with azimuths a lot — compass readings, drill coll
 
     Meridian aims to make this job a little easier. Give it a lat/long, or pick a point off the map, and it returns the adjustments you need for the specified date. It will even drop all of the info into an image or PDF for your project documentation. And if you need to process an entire dataset, feed it a point or polygon layer and it will calculate the adjustments using a date field in your data — or a date you specify.
 
-    Disclaimer: Values are derived from global geomagnetic models (WMM/WMMHR) and are approximations only. Local magnetic anomalies and model limitations mean results may differ from observed values. Always cross-check critical figures against a trusted independent source before use in survey or safety-critical applications.
+    Disclaimer: Values are derived from global geomagnetic models (WMM/WMMHR/IGRF-14) and are approximations only. Local magnetic anomalies and model limitations mean results may differ from observed values. Always cross-check critical figures against a trusted independent source before use in survey or safety-critical applications.
 
 tracker=https://github.com/stevengraham/meridian/issues
 repository=https://github.com/stevengraham/meridian
 homepage=https://github.com/stevengraham/meridian
 
-tags=magnetic declination,grid convergence,north correction,WMM,survey,geophysics,compass,azimuth,bearing
+tags=magnetic declination,grid convergence,north correction,WMM,IGRF,survey,geophysics,compass,azimuth,bearing
 
 category=Vector
 icon=icon.png
@@ -38,3 +38,4 @@ changelog=
         Full component output (I, H, F, X, Y, Z).
         PDF/PNG north-arrow report with worked examples.
         Map-click tool for manual point entry.
+        IGRF-14 model bundled for historical dates (1900–2010).
