@@ -1,6 +1,6 @@
 """
-Model registry: maps a date string to the correct WMM epoch and returns a
-cached model instance.
+Model registry: maps a date string to the correct WMM/IGRF epoch and returns
+a cached model instance.
 """
 
 import os
@@ -8,17 +8,19 @@ import warnings
 from functools import lru_cache
 from ._wmm import WMM, _decimal_year, _DATA_DIR
 
-# Each entry: (epoch_start_inclusive, epoch_end_exclusive, model_name, cof_filename)
+# Each entry: (epoch_start_inclusive, epoch_end_exclusive, model_name, filename)
 # Ordered newest first so the first match wins.
+# IGRF14 sits below the WMM entries so WMM takes priority for 2010-2025.
 _EPOCHS = [
-    (2025.0, 2030.0, "WMMHR2025", "WMMHR.COF"),     # high-resolution variant
-    (2025.0, 2030.0, "WMM2025", "WMM2025.COF"),   # standard variant
+    (2025.0, 2030.0, "WMMHR2025", "WMMHR.COF"),
+    (2025.0, 2030.0, "WMM2025", "WMM2025.COF"),
     (2020.0, 2025.0, "WMM2020", "WMM2020.COF"),
     (2015.0, 2020.0, "WMM2015v2", "WMM2015v2.COF"),
     (2010.0, 2015.0, "WMM2010", "WMM2010.COF"),
+    (1900.0, 2010.0, "IGRF14", "igrf14coeffs.txt"),
 ]
 
-# Only keep epochs whose COF file is present
+# Only keep epochs whose data file is present
 _AVAILABLE = [
     e for e in _EPOCHS
     if os.path.exists(os.path.join(_DATA_DIR, e[3]))
@@ -26,16 +28,20 @@ _AVAILABLE = [
 
 if not _AVAILABLE:
     raise RuntimeError(
-        f"No WMM COF files found in {_DATA_DIR}. "
-        "Place at least one WMM*.COF file there."
+        f"No model data files found in {_DATA_DIR}. "
+        "Place at least one WMM*.COF or igrf14coeffs.txt file there."
     )
 
 _model_names = [e[2] for e in _AVAILABLE]
 
 
 @lru_cache(maxsize=8)
-def _get_model(cof_filename: str) -> WMM:
-    return WMM(os.path.join(_DATA_DIR, cof_filename))
+def _get_model(filename: str):
+    path = os.path.join(_DATA_DIR, filename)
+    if filename.endswith(".txt"):
+        from ._igrf import IGRF
+        return IGRF(path)
+    return WMM(path)
 
 
 def available_models() -> list[str]:

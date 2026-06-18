@@ -22,8 +22,9 @@ Meridian aims to make this job a little easier.
 
 ## Features
 
-- **Magnetic declination** (D) from bundled World Magnetic Model epochs: WMM2010, WMM2015v2,
-  WMM2020, and the high-resolution WMMHR2025 (degree-133).
+- **Magnetic declination** (D) from bundled models covering **1900–2030**:
+  - World Magnetic Model: WMM2010, WMM2015v2, WMM2020, and the high-resolution WMMHR2025 (degree-133).
+  - IGRF-14: covers 1900–2030; used automatically for historical dates before 2010.
 - **Grid convergence** (γ) computed numerically from the layer CRS — works for any
   projected coordinate system.
 - **Grid magnetic angle** (GMA = D − γ) — the single correction you apply in the field.
@@ -35,7 +36,7 @@ Meridian aims to make this job a little easier.
 - **Full field components** — optionally output I, H, F, X, Y, Z.
 - **PDF/PNG report** — a north-arrow diagram with worked examples and a parameter table for
   your project documentation.
-- **Fully offline** — all WMM coefficient files are bundled; no internet connection required.
+- **Fully offline** — all coefficient files are bundled; no internet connection required.
 
 ## Installation
 
@@ -65,10 +66,10 @@ then enable it under **Plugins → Manage and Install Plugins → Installed**.
 
 ## Disclaimer
 
-Magnetic declination values are derived from global geomagnetic models (WMM / WMMHR) and are
-approximations only. Local magnetic anomalies, crustal variations, and model limitations mean
-results may differ from observed values. Always cross-check critical figures against a trusted
-independent source before use in survey or safety-critical applications.
+Magnetic declination values are derived from global geomagnetic models (WMM / WMMHR / IGRF-14)
+and are approximations only. Local magnetic anomalies, crustal variations, and model limitations
+mean results may differ from observed values. Always cross-check critical figures against a
+trusted independent source before use in survey or safety-critical applications.
 
 ## Licence
 
@@ -77,7 +78,10 @@ GNU General Public License v2 — see [LICENSE](LICENSE).
 ## Acknowledgements
 
 World Magnetic Model coefficient files are public domain, produced by NOAA's National
-Centers for Environmental Information.
+Centers for Environmental Information (NCEI).
+
+IGRF-14 coefficient file (`igrf14coeffs.txt`) is produced by the IAGA Working Group V-MOD
+and distributed by the British Geological Survey (BGS) / NOAA NCEI.
 
 ---
 

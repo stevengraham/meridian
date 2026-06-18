@@ -1,17 +1,26 @@
 """
 magdec — offline magnetic declination for single points and DataFrames.
 
-Bundled models: WMM2010, WMM2015v2, WMM2020, WMMHR2025 (high-resolution,
-n=133, default for 2025–2030).  Additional epochs can be added by placing
-a WMM*.COF file in magdec/data/ — see data/WMM2025.md.
+Bundled models
+--------------
+WMM (World Magnetic Model):
+  WMM2010, WMM2015v2, WMM2020, WMMHR2025 (high-resolution, n=133).
+IGRF-14 (International Geomagnetic Reference Field):
+  igrf14coeffs.txt — covers 1900–2030; used automatically for pre-2010 dates.
+
+Auto mode picks the best model for each date: WMMHR2025 (2025-30) →
+WMM2020 (2020-25) → WMM2015v2 (2015-20) → WMM2010 (2010-15) →
+IGRF14 (1900-2010).
 
 Quick start
 -----------
 >>> import magdec
 >>> magdec.declination(-31.95, 115.86, '2024-06-17')     # Perth, WA
 1.76...
+>>> magdec.declination(-31.95, 115.86, '1980-01-01')     # historical date
+-1.3...
 >>> magdec.declination(-31.95, 115.86, '2024-06-17', model='all')
-{'WMMHR2025': ..., 'WMM2020': 1.76..., 'WMM2015v2': ..., 'WMM2010': ...}
+{'WMMHR2025': ..., 'WMM2020': 1.76..., 'WMM2015v2': ..., ...}
 >>> result = magdec.components(-31.95, 115.86, '2024-06-17')
 >>> result.D, result.F
 (1.76..., 57234.3...)
