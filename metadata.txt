@@ -3,7 +3,7 @@ name=Meridian
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
 description=Convert between magnetic, true and grid north for any location and date (1900–2030) — fully offline, using WMM, WMMHR and IGRF-14 models.
-version=0.1.0
+version=0.2.0
 author=Steve Graham
 email=stevengraham84@gmail.com
 about=As geologists we deal with azimuths a lot — compass readings, drill collar orientations, structural logging, downhole surveys. The reference for an azimuth is critical: is it relative to magnetic north, true north, or the grid system you're working in? When starting a new project, one of the first tasks is to orient yourself and work out the differences between these references and how to convert between them.
@@ -29,6 +29,8 @@ server=False
 hasProcessingProvider=no
 
 changelog=
+    0.2.0 — Add IGRF-14 support for historical magnetic declination (1900–2030).
+
     0.1.0 — Initial release.
         Bundled WMM2010, WMM2015v2, WMM2020, WMMHR2025 coefficient files.
         Auto, All, and Specific model modes.
