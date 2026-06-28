@@ -15,7 +15,7 @@ Reference file: igrf14coeffs.txt from BGS / NOAA NCEI, placed in magdec/data/.
 
 import math
 import os
-from ._wmm import MagResult, _decimal_year, _A2, _B2, _C2, _A4, _B4, _C4, _RE
+from ._wmm import MagResult, _decimal_year, _A2, _B2, _C2, _A4, _C4, _RE
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -188,11 +188,14 @@ class IGRF:
         sa = _C2 * crlat * srlat / (r * d)
 
         # ----- longitude trig -----
-        sp = self._buf_sp; cp = self._buf_cp
-        p = self._buf_p; dp = self._buf_dp
+        sp = self._buf_sp
+        cp = self._buf_cp
+        p = self._buf_p
+        dp = self._buf_dp
         pp = self._buf_pp
 
-        sp[0] = 0.0; cp[0] = 1.0
+        sp[0] = 0.0
+        cp[0] = 1.0
         sp[1] = math.sin(rlon)
         cp[1] = math.cos(rlon)
         for m in range(2, maxord + 1):
@@ -206,7 +209,9 @@ class IGRF:
         aor = _RE / r
         ar = aor * aor
         br = bt = bp = bpp = 0.0
-        k = self._k; fn = self._fn; fm = self._fm
+        k = self._k
+        fn = self._fn
+        fm = self._fm
 
         for n in range(1, maxord + 1):
             ar *= aor
@@ -263,7 +268,7 @@ class IGRF:
         H = math.sqrt(X * X + Y * Y)
         F = math.sqrt(H * H + Z * Z)
         D = math.degrees(math.atan2(Y, X))
-        I = math.degrees(math.atan2(Z, H))
+        inc = math.degrees(math.atan2(Z, H))
 
-        return MagResult(D=D, I=I, H=H, X=X, Y=Y, Z=Z, F=F,
+        return MagResult(D=D, I=inc, H=H, X=X, Y=Y, Z=Z, F=F,
                          model=self.name, date=date_str)

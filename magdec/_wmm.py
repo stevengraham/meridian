@@ -177,11 +177,15 @@ class WMM:
 
         # ----- longitude trig -----
         # Use pre-allocated buffers (WMM instances are LRU-cached singletons)
-        sp = self._buf_sp; cp = self._buf_cp
-        p = self._buf_p; dp = self._buf_dp
-        pp = self._buf_pp; tc = self._buf_tc
+        sp = self._buf_sp
+        cp = self._buf_cp
+        p = self._buf_p
+        dp = self._buf_dp
+        pp = self._buf_pp
+        tc = self._buf_tc
 
-        sp[0] = 0.0; cp[0] = 1.0
+        sp[0] = 0.0
+        cp[0] = 1.0
         sp[1] = math.sin(rlon)
         cp[1] = math.cos(rlon)
         for m in range(2, maxord + 1):
@@ -208,8 +212,10 @@ class WMM:
                     p[m][n] = ct * p[m][n - 1]
                     dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1]
                 else:
-                    if m > n - 2: p[m][n - 2] = 0.0
-                    if m > n - 2: dp[m][n - 2] = 0.0
+                    if m > n - 2:
+                        p[m][n - 2] = 0.0
+                    if m > n - 2:
+                        dp[m][n - 2] = 0.0
                     p[m][n] = ct * p[m][n - 1] - self._k[m][n] * p[m][n - 2]
                     dp[m][n] = ct * dp[m][n - 1] - st * p[m][n - 1] - self._k[m][n] * dp[m][n - 2]
 
@@ -252,9 +258,9 @@ class WMM:
         H = math.sqrt(X * X + Y * Y)
         F = math.sqrt(H * H + Z * Z)
         D = math.degrees(math.atan2(Y, X))
-        I = math.degrees(math.atan2(Z, H))
+        inc = math.degrees(math.atan2(Z, H))
 
-        return MagResult(D=D, I=I, H=H, X=X, Y=Y, Z=Z, F=F,
+        return MagResult(D=D, I=inc, H=H, X=X, Y=Y, Z=Z, F=F,
                          model=self.name, date=date_str)
 
 

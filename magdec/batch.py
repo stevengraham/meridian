@@ -57,7 +57,7 @@ def declination_batch(
         ``'auto'``) or ``{field}_{model_name}`` (for multi-model runs).
     """
     try:
-        import pandas as _pd
+        import pandas
     except ImportError as e:
         raise ImportError("pandas is required for batch processing") from e
 
