@@ -1,7 +1,7 @@
 # Meridian
 
-A QGIS plugin for converting between **magnetic**, **true**, and **grid** north for any
-location and date — fully offline.
+A QGIS plugin providing **magnetic declination**, **grid convergence**, and **grid magnetic
+angle** for any location and date (1900–2030) — fully offline.
 
 ![Meridian](icon_64.png)
 

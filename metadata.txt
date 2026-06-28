@@ -2,7 +2,7 @@
 name=Meridian
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
-description=Convert between magnetic, true and grid north for any location and date (1900–2030) — fully offline, using WMM, WMMHR and IGRF-14 models.
+description=Provides magnetic declination, grid convergence and grid magnetic angle for any location and date (1900–2030) — fully offline, using WMM, WMMHR and IGRF-14 models.
 version=0.2.1
 author=Steve Graham
 email=stevengraham84@gmail.com
